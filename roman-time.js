@@ -1,147 +1,183 @@
-var hours = process.argv[2];
-var minutes = process.argv[3];
-var key_full;
-var roman_time = new Array();
-var no_full =new Array('','','','','','','','');
-var O = new Array('               ',
-      				    '               ',
-        				  '               ',
-        				  ' _  _  _  _  _ ',
-        				  '(_)(_)(_)(_)(_)',
-        				  '               ',
-        				  '               ',
-        				  '               ');
-var I = new Array(' _  _  _ ',
-	                '(_)(_)(_)',
-	                '   (_)   ',
-        				  '   (_)   ',
-        				  '   (_)   ',
-        				  '   (_)   ',
-        				  ' _ (_) _ ',
-        				  '(_)(_)(_)');
-var V = new Array(' _           _ ',
-        				  '(_)         (_)',
-        				  '(_)         (_)',
-        				  '(_)_       _(_)',
-        				  '  (_)     (_)  ',
-        				  '   (_)   (_)   ',
-        				  '    (_)_(_)    ',
-        				  '      (_)      ')
-var X = new Array(' _           _ ',
-        				  '(_)_       _(_)',
-        				  '  (_)_   _(_)  ',
-        				  '    (_)_(_)    ',
-        			    '     _(_)_     ',
-        				  '   _(_) (_)_   ',
-        			    ' _(_)     (_)_ ',
-        				  '(_)         (_)')
-var L = new Array(' _          ',
-        				  '(_)         ',
-        				  '(_)         ',
-        				  '(_)         ',
-        				  '(_)         ',
-        				  '(_)         ',
-        				  '(_) _  _  _ ',
-        				  '(_)(_)(_)(_)');
-var colon = new Array('   ',
-					  '   ',
-					  ' _ ',
-					  '(_)',
-					  '   ',
-					  ' _ ',
-					  '(_)',
-					  '   ')
+var hours = parseInt(process.argv[2],10);
+var minutes = parseInt(process.argv[3],10);
+var romanTime;
+var romanTimeScreen='';
+var romanTimeASCLL = new Array();
+var noFull =['','','','','','','',''];
 if(hours<25 && hours>-1 && minutes<60 && minutes>-1){
-	for(var i=0;i< I.length;i++){
-		roman_time[i]=no_full[i];
+	romanTime=timeToRoman(romanTime);
+	for(var i=0;i< romanTime.length;i++){
+		romanTimeScreen+=romanTime[i];
 	}
-	key_full=0;
-	roman_time=timeToRoman(roman_time,parseInt(hours/10),no_full,X,L);
-	roman_time=timeToRoman(roman_time,hours%10,O,I,V);
-	for(var i=0;i< I.length;i++){
-		roman_time[i]+=colon[i];
-	}
-	key_full=0;
-	roman_time=timeToRoman(roman_time,parseInt(minutes/10),no_full,X,L);
-	roman_time=timeToRoman(roman_time,minutes%10,O,I,V);
-	for(var i=0;i< roman_time.length;i++){
-		console.log(roman_time[i]);
+	console.log(romanTimeScreen);
+	romanTimeASCLL=timeRomanToASCLL(romanTimeASCLL,timeToRoman(romanTime));
+		for(var i=0;i< romanTimeASCLL.length;i++){
+		console.log(romanTimeASCLL[i]);
 	}
 }else {
 	console.log("Время указано не верно");}
-function timeToRoman(roman_time,varToCompare,noFull,one,five){
-	switch(varToCompare){
-		case(0):{
-			if(key_full==0) {
-				for (var i = 0; i < one.length; i++) {
-					roman_time[i] += noFull[i];
-				}
-			}
-			break;
-		}
-		case(1):{
-			for(var i=0;i< one.length;i++){
-				roman_time[i]+=one[i];
-			}
-			key_full=1;
-			break;
-		}
-		case(2):{
-			for(var i=0;i< I.length;i++){
-				roman_time[i]+=one[i]+one[i];
-			}
-			key_full=1;
-			break;
-		}
-		case(3):{
-			for(var i=0;i< one.length;i++){
-				roman_time[i]+=one[i]+one[i]+one[i];
-			}
-			key_full=1;
-			break;
-		}
-		case(4):{
-			for(var i=0;i< one.length;i++){
-				roman_time[i]+=one[i]+five[i];
-			}
-			key_full=1;
-			break;
-		}
-		case(5):{
-			for(var i=0;i< one.length;i++){
-				roman_time[i]+=five[i];
-			}
-			key_full=1;
-			break;
-		}
-		case(6):{
-			for(var i=0;i< one.length;i++){
-				roman_time[i]+=five[i]+one[i];
-			}
-			key_full=1;
-			break;
-		}
-		case(7):{
-			for(var i=0;i< one.length;i++){
-				roman_time[i]+=five[i]+one[i]+one[i];
-			}
-			key_full=1;
-			break;
-		}
-		case(8):{
-			for(var i=0;i< one.length;i++){
-				roman_time[i]+=five[i]+one[i]+one[i]+one[i];
-			}
-			key_full=1;
-			break;
-		}
-		case(9):{
-			for(var i=0;i< one.length;i++){
-				roman_time[i]+=one[i]+X[i];
-			}
-			key_full=1;
-			break;
-		}
+function timeToRoman(romanTime){
+	romanTime=[''];
+	var units = ['','I','II','III','IV','V','VI','VII','VIII','IX'];
+	var dozens = ['','X','XX','XXX','XL','L'];
+	var countArray=0;
+	romanTime[countArray]=dozens[parseInt(hours/10,10)];
+	countArray++;
+	romanTime[countArray]=units[hours%10];
+	if(dozens[parseInt(hours/10),10]==0 && units[hours%10]==0){
+		countArray--;
+		romanTime[countArray]='-';
 	}
-	return(roman_time);
+	countArray++;
+	romanTime[countArray]=':';
+	countArray++;
+	romanTime[countArray]=dozens[parseInt(minutes/10,10)];
+	countArray++;
+	romanTime[countArray]=units[minutes%10];
+	if(dozens[parseInt(minutes/10,10)]==0 && units[minutes%10]==0){
+		countArray--;
+		romanTime[countArray]='-';
+	}
+	return(romanTime);
+}
+function timeRomanToASCLL(romanTimeASCLL,romanTime){
+	for(var i=0;i<noFull.length;i++){
+		romanTimeASCLL[i]=noFull[i];
+	} var count =0;
+	var O =['               ',
+		'               ',
+		'               ',
+		' _  _  _  _  _ ',
+		'(_)(_)(_)(_)(_)',
+		'               ',
+		'               ',
+		'               '];
+	var I = [' _ ',
+		'(_)',
+		'(_)',
+		'(_)',
+		'(_)',
+		'(_)',
+		'(_)',
+		'(_)'];
+	var V = [' _           _ ',
+		'(_)         (_)',
+		'(_)         (_)',
+		'(_)_       _(_)',
+		'  (_)     (_)  ',
+		'   (_)   (_)   ',
+		'    (_)_(_)    ',
+		'      (_)      '];
+	var X = [' _           _ ',
+		'(_)_       _(_)',
+		'  (_)_   _(_)  ',
+		'    (_)_(_)    ',
+		'     _(_)_     ',
+		'   _(_) (_)_   ',
+		' _(_)     (_)_ ',
+		'(_)         (_)'];
+	var L =[' _          ',
+		'(_)         ',
+		'(_)         ',
+		'(_)         ',
+		'(_)         ',
+		'(_)         ',
+		'(_) _  _  _ ',
+		'(_)(_)(_)(_)'];
+	var colon = ['   ',
+		     '   ',
+		     ' _ ',
+	       	     '(_)',
+		     '   ',
+		     ' _ ',
+		     '(_)',
+		     '   '];
+	do{
+		switch(romanTime[count]){
+			case('-'):
+				for (var i = 0; i < O.length; i++) {
+					romanTimeASCLL[i] += O[i];
+				}
+				break;
+			case(':'):
+				for (var i = 0; i < colon.length; i++) {
+					romanTimeASCLL[i] += colon[i];
+				}
+				break;
+			case('I'):
+				for(var i=0;i< I.length;i++){
+					romanTimeASCLL[i]+=I[i];
+				}
+				break;
+			case('II'):
+				for(var i=0;i< I.length;i++){
+					romanTimeASCLL[i]+=I[i]+I[i];
+				}
+				break;
+			case('III'):
+				for(var i=0;i< I.length;i++){
+					romanTimeASCLL[i]+=I[i]+I[i]+I[i];
+				}
+				break;
+			case('IV'):
+				for(var i=0;i< I.length;i++){
+					romanTimeASCLL[i]+=I[i]+V[i];
+				}
+				break;
+			case('V'):
+				for(var i=0;i< V.length;i++){
+					romanTimeASCLL[i]+=V[i];
+				}
+				break;
+			case('VI'):
+				for(var i=0;i< V.length;i++){
+					romanTimeASCLL[i]+=V[i]+I[i];
+				}
+				break;
+			case('VII'):
+				for(var i=0;i< V.length;i++){
+					romanTimeASCLL[i]+=V[i]+I[i]+I[i];
+				}
+				break;
+			case('VIII'):
+				for(var i=0;i< V.length;i++){
+					romanTimeASCLL[i]+=V[i]+I[i]+I[i]+I[i];
+				}
+				break;
+			case('IX'):
+				for(var i=0;i< I.length;i++){
+					romanTimeASCLL[i]+=I[i]+X[i];
+				}
+				break;
+			case('X'):{
+				for(var i=0;i< X.length;i++){
+					romanTimeASCLL[i]+=X[i];
+				}
+				break;
+			}
+			case('XX'):
+				for(var i=0;i< X.length;i++){
+					romanTimeASCLL[i]+=X[i]+X[i];
+				}
+				break;
+			case('XXX'):
+				for(var i=0;i< X.length;i++){
+					romanTimeASCLL[i]+=X[i]+X[i]+X[i];
+				}
+				break;
+			case('XL'):
+				for(var i=0;i< X.length;i++){
+					romanTimeASCLL[i]+=X[i]+L[i];
+				}
+				break;
+			case('L'):
+				for(var i=0;i< L.length;i++){
+					romanTimeASCLL[i]+=L[i];
+				}
+				break;
+			default :
+		}
+		count++;
+	}while(count<romanTime.length);
+	return(romanTimeASCLL);
 }
